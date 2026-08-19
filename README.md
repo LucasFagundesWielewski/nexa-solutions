@@ -43,6 +43,23 @@ A API estará disponível em:
 http://localhost:8000/api/chamados/
 ```
 
+## Executando os testes
+
+Com o ambiente virtual configurado (veja "Executar localmente" acima):
+
+```bash
+cd backend
+python manage.py test
+```
+
+Ou, com o ambiente em containers:
+
+```bash
+docker compose exec api python manage.py test
+```
+
+Os testes cobrem: criação válida de chamado, criação sem título (deve retornar 400), filtro de chamados por status e o endpoint de indicadores.
+
 ## Observação
 
 A documentação deste projeto está incompleta. A dupla deverá melhorar este arquivo como parte da atividade.
