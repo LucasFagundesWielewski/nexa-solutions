@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from .models import Chamado
 
 
-class ChamadoCreationTests(APITestCase):
+class ChamadoTitleValidationTests(APITestCase):
     """Cobre INC-01: cadastro de chamado e validação do título."""
 
     def setUp(self):
