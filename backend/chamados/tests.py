@@ -6,6 +6,8 @@ from .models import Chamado
 
 
 class ChamadoTitleValidationTests(APITestCase):
+    """Cobre INC-01: cadastro de chamado e validação do título."""
+
     def setUp(self):
         self.url = reverse("chamado-list-create")
 
@@ -38,3 +40,69 @@ class ChamadoTitleValidationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("titulo", response.data)
         self.assertEqual(Chamado.objects.count(), 0)
+
+
+class ChamadoStatusFilterTests(APITestCase):
+    """Cobre INC-02: filtro de chamados por status."""
+
+    def setUp(self):
+        self.url = reverse("chamado-list-create")
+
+        Chamado.objects.create(titulo="Chamado aberto", status=Chamado.Status.ABERTO)
+        Chamado.objects.create(
+            titulo="Chamado em andamento", status=Chamado.Status.EM_ANDAMENTO
+        )
+        Chamado.objects.create(
+            titulo="Chamado concluído", status=Chamado.Status.CONCLUIDO
+        )
+
+    def test_list_without_filter_returns_all_chamados(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+    def test_filter_by_status_returns_only_matching_chamados(self):
+        response = self.client.get(self.url, {"status": Chamado.Status.ABERTO})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["status"], Chamado.Status.ABERTO)
+
+    def test_filter_by_invalid_status_returns_400(self):
+        response = self.client.get(self.url, {"status": "STATUS_INEXISTENTE"})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("status", response.data)
+
+
+class ChamadoIndicadoresTests(APITestCase):
+    """Cobre INC-06: indicadores agregados de chamados."""
+
+    def setUp(self):
+        self.url = reverse("chamado-indicadores")
+
+    def test_indicadores_with_no_chamados_returns_zeroed_counts(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data,
+            {"total": 0, "abertos": 0, "em_andamento": 0, "concluidos": 0},
+        )
+
+    def test_indicadores_counts_chamados_by_status(self):
+        Chamado.objects.create(titulo="Chamado 1", status=Chamado.Status.ABERTO)
+        Chamado.objects.create(titulo="Chamado 2", status=Chamado.Status.ABERTO)
+        Chamado.objects.create(
+            titulo="Chamado 3", status=Chamado.Status.EM_ANDAMENTO
+        )
+        Chamado.objects.create(titulo="Chamado 4", status=Chamado.Status.CONCLUIDO)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data,
+            {"total": 4, "abertos": 2, "em_andamento": 1, "concluidos": 1},
+        )

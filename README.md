@@ -132,6 +132,7 @@ Base: `http://localhost:8000/api/`
 | `POST` | `/api/chamados/` | Cria um novo chamado. O campo `titulo` é obrigatório. |
 | `GET` | `/api/chamados/<id>/` | Consulta um chamado específico. |
 | `PATCH` / `PUT` | `/api/chamados/<id>/` | Atualiza um chamado existente. |
+| `GET` | `/api/indicadores/` | Retorna contagem total de chamados e por status (`abertos`, `em_andamento`, `concluidos`). |
 
 **Campos do chamado:** `id`, `titulo` (obrigatório), `descricao`, `status` (`ABERTO`, `EM_ANDAMENTO` ou `CONCLUIDO`), `criado_em`, `atualizado_em`.
 
@@ -149,7 +150,17 @@ curl -X POST http://localhost:8000/api/chamados/ \
 curl "http://localhost:8000/api/chamados/?status=ABERTO"
 ```
 
-> O endpoint de indicadores (`GET /api/indicadores/`), previsto na demanda [INC-06](docs/issues.md), está em desenvolvimento e será documentado aqui assim que integrado à `main`.
+**Exemplo — indicadores:**
+
+```bash
+curl http://localhost:8000/api/indicadores/
+```
+
+Resposta:
+
+```json
+{"total": 4, "abertos": 2, "em_andamento": 1, "concluidos": 1}
+```
 
 ## Decisões técnicas
 
