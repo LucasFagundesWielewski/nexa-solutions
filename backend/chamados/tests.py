@@ -6,6 +6,8 @@ from .models import Chamado
 
 
 class ChamadoTitleValidationTests(APITestCase):
+    """Cobre INC-01: cadastro de chamado e validação do título."""
+
     def setUp(self):
         self.url = reverse("chamado-list-create")
 
@@ -41,6 +43,8 @@ class ChamadoTitleValidationTests(APITestCase):
 
 
 class ChamadoStatusFilterTests(APITestCase):
+    """Cobre INC-02: filtro de chamados por status."""
+
     def setUp(self):
         self.url = reverse("chamado-list-create")
 
@@ -73,6 +77,8 @@ class ChamadoStatusFilterTests(APITestCase):
 
 
 class ChamadoIndicadoresTests(APITestCase):
+    """Cobre INC-06: indicadores agregados de chamados."""
+
     def setUp(self):
         self.url = reverse("chamado-indicadores")
 
